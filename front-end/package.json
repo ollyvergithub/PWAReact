@@ -1,7 +1,9 @@
 {
   "name": "behappywith.me",
   "version": "1.0.0",
-  "scripts": {},
+  "scripts": {
+    "start": "node_modules\\.bin\\webpack-dev-server",
+  },
   "author": "Ollyver Ottoboni <ollyverottoboni@gmail.com> (https://ottobonidesign.com.br/)",
   "license": "ISC",
   "dependencies": {
