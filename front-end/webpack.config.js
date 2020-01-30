@@ -3,33 +3,40 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // Plugin para separar o css do bundle.js
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJSPlugin = require('uglifyjs-webpack-plugin');
+
+console.log("Estou aqui no webpack.config.js")
+
+plugins = [
+    new HtmlWebpackPlugin({
+        filename: 'index.html',
+        template: path.join(__dirname, 'src/index.html')
+    }),
+    new ExtractTextPlugin('style.css')
+];
+
+if (process.env.NODE_ENV === 'production') {
+    plugins.push(new webpack.DefinePlugin({
+        "process.env": {
+            NODE_ENV: JSON.stringify(process.env.NODE_ENV)
+        }
+    }));
+    plugins.push(new webpack.optimize.UglifyJsPlugin());
+}
 
 module.exports = {
-    entry: path.join(__dirname, './src/index.js'),
+    entry: path.join(__dirname, 'src/index.js'),
     output: {
-        path: path.join(__dirname, './dist'),
+        path: path.join(__dirname, 'dist'),
         filename: 'bundle.js'
     },
-    resolve: {
-        extensions: [".js", ".jsx"]
-    },
-    devServer: {
-        publicPath: "/",
-        contentBase: "./dist",
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            filename: 'index.html',
-            template: path.join(__dirname, './src/index.html')
-        }),
-        new ExtractTextPlugin('style.css')
-    ],
+    plugins: plugins,
     module: {
         rules: [
             {
                 test: /.js?$/,
                 exclude: /node_modules/,
-                include: path.join(__dirname, './src'),
+                include: path.join(__dirname, 'src'),
                 use: [
                     {
                         loader: 'babel-loader',
@@ -40,7 +47,7 @@ module.exports = {
                 ]
             },
             {
-                test: /\.(jpe?g|ico|png|gif|eot|woff|woff2|ttf|svg)$/i,
+                test: /\.(jpe?g|ico|png|gif|svg)$/i,
                 loader: 'file-loader?name=img/[name].[ext]'
             },
             {
@@ -52,5 +59,8 @@ module.exports = {
             }
         ]
     },
-
+    devServer: {
+        publicPath: "/",
+        contentBase: "./dist"
+    }
 };
